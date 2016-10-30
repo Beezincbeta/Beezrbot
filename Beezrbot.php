@@ -2,7 +2,7 @@
 ob_start();
 // Config Bot
 define('API_KEY','278836889:AAGPnLZKesFvcTaGEQmo9zvM-DlFp_GMO6M'); // ex; 249472322:AAErkOx2Sm_yJdR2vx_s0xW_A9uU8_xPjp8 //
-define('ADMIN','{249010980,216137613}'); // ex; {24853314,216137613,0} //
+define('ADMIN','249010980'); // ex; {24853314,216137613,0} //
 // end Config //
 
 // utils bot --> //
@@ -18,7 +18,7 @@ function bot($method,$datas=[]){
     }else{
         return json_decode($res);
     }
-},
+}
 function pwr($method1,$datas1=[]){
     $url1 = "https://api.pwrtelegram.xyz/bot".API_KEY."/".$method1;
     $ch1 = curl_init();
@@ -39,26 +39,25 @@ $editm = $update->edited_message;
 $mid = $message->message_id;
 $chat_id = $message->chat->id;
 $id = $message->from->id;
-$fristname = $message->from->frist_name;
+$firstname = $message->from->first_name;
 $lastname = $message->from->last_name;
-$usernmae = $message->from->username;
+$username = $message->from->username;
 $text1 = $message->text;
 $fadmin = $message->from->id;
 $admin = ADMIN;
-$file_o = $mid.'.json';
-file_put_contents($file_o,json_encode($update->message->text));
-chmod($file_o,0777);
-  $file_o = $eid.'.json';
-  file_put_contents($file_o,json_encode($update->edited_message->text));
-}if(preg_match('/^\/([Ss]tart)/',$text1)){
-  $text = "*Hi,* [".$fristname."](https://tekegram.me/".$usernmae.") \n *Welcome to* [Beez 🐝](https://telegram.me/beez_z)!\n *Governor:* [Wathiq](https://telegram.me/iluli) [`249010980`] \n - @WathiqApi \n - @Beezinc \n Moderators:\n• Wathiq [249010980]\n• Copy [216137613]\n\n - No pornography\n- No advertising\n- No spam";
+
+if(preg_match('/^\/([Ss]tart)/',$text1)){
+  $textc = "*Hi,* [$firstname](https://telegram.me/$username)\n\n*Welcome to* [Beez 🐝](https://telegram.me/beez_z)!";
+  bot('sendChatAction',[
+    'chat_id'=>$chat_id,
+    'action'=>'typing'
+    ]);
   bot('sendmessage',[
     'chat_id'=>$chat_id,
-    'text'=>$text,
+    'text'=>$textc,
     'disable_web_page_preview'=>'true',
-	'disable_notification'=>'false',
     'parse_mode'=>'Markdown',
-	'reply_to_message_id'=>$mid,
+    'reply_to_message_id'=>$mid,
     'reply_markup'=>json_encode([
       'inline_keyboard'=>[
         [
@@ -67,13 +66,18 @@ chmod($file_o,0777);
       ]
     ])
   ]);
-}elseif( $fadmin == $admin |  $fadmin == $admin2 and $update->message->text == '/stats'){
+}
+elseif( $fadmin == $admin |  $fadmin == $admin2 and $update->message->text == '/stats'){
     $txtt = file_get_contents('member.txt');
     $member_id = explode("\n",$txtt);
     $mmemcount = count($member_id) -1;
-  bot('sendMessage',[
-      'chat_id'=>$chat_id,
-      'text'=>"users: $mmemcount 👤 "
+     bot('sendChatAction',[
+    'chat_id'=>$chat_id,
+    'action'=>'typing'
+    ]);
+     bot('sendMessage',[
+    'chat_id'=>$chat_id,
+    'text'=>"users: $mmemcount 👤 "
     ]);
 }elseif(preg_match('/^\/([Rr]ules)/',$text1)){
   $text = "
@@ -106,11 +110,16 @@ Governor: Wathiq `[249010980]`
 • Copy `[216137613]`
 
   ";
+   bot('sendChatAction',[
+    'chat_id'=>$chat_id,
+    'action'=>'typing'
+    ]);
   bot('sendmessage',[
     'chat_id'=>$chat_id,
     'text'=>$text,
     'disable_web_page_preview'=>'true',
     'parse_mode'=>'Markdown',
+    'reply_to_message_id'=>$mid,
     'reply_markup'=>json_encode([
       'inline_keyboard'=>[
         [
@@ -120,19 +129,44 @@ Governor: Wathiq `[249010980]`
     ])
   ]);
 }elseif(isset($update->message-> new_chat_member )){
-	$textr = "*Hi,* [".$fristname."](https://tekegram.me/".$usernmae.") \n *Welcome to* [Beez 🐝](https://telegram.me/beez_z)!\n\n /`rulse` - Show rulse group\n"
+$textr = "*Hi,* [$firstname](https://telegram.me/$username) \n *Welcome to* [Beez 🐝](https://telegram.me/beez_z)!\n\n /`rules` - Show rules group\n";
+ bot('sendChatAction',[
+    'chat_id'=>$chat_id,
+    'action'=>'typing'
+    ]);
 bot('sendMessage',[
     'chat_id'=>$chat_id,
     'text'=>$textr,
-	'disable_web_page_preview'=>'true',
+	  'disable_web_page_preview'=>'true',
     'parse_mode'=>'Markdown',
+    'reply_to_message_id'=>$mid,
     ]);
-}elseif($fadmin == $admin |  $fadmin == $admin2 and $update->message->text == '/del'){
-  pwr('deletemessage',[
+}elseif(isset($update->message-> left_chat_member	 )){
+$textr = "*good bye bye bye*";
+ bot('sendChatAction',[
     'chat_id'=>$chat_id,
-    'message_id'=>$mid,
+    'action'=>'typing'
+    ]);
+bot('sendMessage',[
+    'chat_id'=>$chat_id,
+    'text'=>$textr,
+	  'disable_web_page_preview'=>'true',
+    'parse_mode'=>'Markdown',
+    'reply_to_message_id'=>$mid,
+    ]);
+}elseif(preg_match('/^\/([Hh]elp)/',$text1)){
+   bot('sendChatAction',[
+    'chat_id'=>$chat_id,
+    'action'=>'upload_photo'
+    ]);
+bot('sendPhoto',[
+    'chat_id'=>$chat_id,
+    'photo'=>'http://www.colorhexa.com/ff00ff.png',
+    'caption'=>'Powered by Beez 🐝',
+    'reply_to_message_id'=>$mid
   ]);
-  
+}
+
 $txxt = file_get_contents('member.txt');
     $pmembersid= explode("\n",$txxt);
     if (!in_array($chat_id,$pmembersid)){
@@ -140,3 +174,4 @@ $txxt = file_get_contents('member.txt');
       $aaddd .= $chat_id."\n";
       file_put_contents('member.txt',$aaddd);
     }
+
